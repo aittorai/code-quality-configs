@@ -68,6 +68,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets[matrix.registry.token_secret] }}
 
+      - name: Check .npmrc
+        run: cat /home/runner/work/_temp/.npmrc
+
       - name: Version bump
         if: ${{ github.event_name == 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/') }}
         run: npm version prepatch --preid=$(date +%s) --no-git-tag-version
