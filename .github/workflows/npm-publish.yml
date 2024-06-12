@@ -17,7 +17,7 @@ on:
       - 'prettier-config-react@v*.*.*'
 
 permissions:
-  contents: write
+  contents: read
   packages: write
 
 jobs:
@@ -42,7 +42,6 @@ jobs:
             package=$(echo ${{github.ref_name}} | cut -d@ -f1)
           fi
           echo "package=$package" >> $GITHUB_OUTPUT
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -64,7 +63,7 @@ jobs:
         working-directory: 'packages/${{steps.get-package.outputs.package}}'
         # only if manual workflow dispatch and not on a tag
         if: github.event_name == 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/')
-        run: npm version prepatch --preid=$(date +%s) --no-git-tag-version
+        run: npm version prepatch --preid=$(git rev-parse --short HEAD) --no-git-tag-version
 
       - name: Publish
         shell: bash
