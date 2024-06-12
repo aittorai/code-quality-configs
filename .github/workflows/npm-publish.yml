@@ -77,7 +77,6 @@ jobs:
         working-directory: packages/${{ steps.get-package.outputs.package }}
 
       - name: Set publish flags
-        id: set-flags
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "FLAGS=--tag pre" >> $GITHUB_OUTPUT
