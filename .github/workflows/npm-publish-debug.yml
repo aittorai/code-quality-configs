@@ -1,0 +1,35 @@
+name: Publish Package
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+        cache: 'pnpm'
+
+    - name: Install pnpm
+      run: npm install -g pnpm
+
+    - name: Set publish flags
+      if: github.event_name == 'workflow_dispatch'
+      run: echo "FLAGS=--tag pre" >> $GITHUB_ENV
+
+    - name: Check flags value
+      run: echo "FLAGS is set to: ${{ env.FLAGS }}"
+
+    - name: Publish package
+      env:
+        FLAGS: ${{ env.FLAGS }}
+      run: |
+        echo "Publishing with flags: ${FLAGS}"
+        pnpm publish --access public --no-git-checks "${FLAGS}" --reporter ndjson
