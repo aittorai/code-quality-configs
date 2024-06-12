@@ -1,6 +1,6 @@
 # Code Quality Configs
 
-A selection of code quality configs intended for use in Invoke's applications.
+A selection of code quality configs intended for use in web applications.
 
 - [eslint-config-react] An `eslint` config package.
 - [prettier-config-react] A `prettier` config package.
@@ -22,7 +22,7 @@ You may need to add `auto-install-peers=true` to your `.npmrc` for this to happe
 1. Install the package.
 
    ```sh
-   pnpm i -D @invoke-ai/eslint-config-react
+   pnpm i -D @aittorai/eslint-config-react
    ```
 
 2. Extend the config in your `eslint` config. You can then override any rules per usual.
@@ -30,7 +30,7 @@ You may need to add `auto-install-peers=true` to your `.npmrc` for this to happe
    ```js
    // .eslintrc.cjs
    module.exports = {
-     extends: ['@invoke-ai/eslint-config-react'],
+     extends: ['@aittorai/eslint-config-react'],
      rules: {
        'i18next/no-literal-string': 'off', // no i18n here
      },
@@ -42,7 +42,7 @@ You may need to add `auto-install-peers=true` to your `.npmrc` for this to happe
 1. Install the package.
 
    ```sh
-   pnpm i -D @invoke-ai/prettier-config-react
+   pnpm i -D @aittorai/prettier-config-react
    ```
 
 2. Spread the config in your `prettier` config. You can then override any individual rules by specifying them after the spread.
@@ -50,7 +50,7 @@ You may need to add `auto-install-peers=true` to your `.npmrc` for this to happe
    ```js
    // .prettierrc.cjs
    module.exports = {
-     ...require('@invoke-ai/prettier-config-react'),
+     ...require('@aittorai/prettier-config-react'),
      printWidth: 9001, // slightly increase printWidth
    };
    ```

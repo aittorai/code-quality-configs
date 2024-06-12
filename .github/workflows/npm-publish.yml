@@ -58,7 +58,7 @@ jobs:
           node-version-file: '.nvmrc'
           cache: pnpm
           registry-url: ${{ matrix.registry.url }}
-          scope: '@invoke-ai'
+          scope: '@aittorai'
 
       - name: Version bump
         working-directory: 'packages/${{steps.get-package.outputs.package}}'

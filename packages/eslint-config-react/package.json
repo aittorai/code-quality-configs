@@ -1,9 +1,9 @@
 {
-  "name": "@invoke-ai/eslint-config-react",
-  "version": "0.0.14",
-  "description": "Invoke's eslint config for react",
+  "name": "@aittorai/eslint-config-react",
+  "version": "0.0.20",
+  "description": "Aittor eslint config for react",
   "main": "./eslint-config.js",
-  "author": "Invoke",
+  "author": "Aittor",
   "license": "Apache-2.0",
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^7.0.2",
