@@ -81,7 +81,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             FLAGS="--tag pre"
           fi
-          pnpm publish --access public --no-git-checks $FLAGS
+          pnpm publish --access public --no-git-checks $FLAGS --reporter ndjson
         working-directory: packages/${{ steps.get-package.outputs.package }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets[matrix.registry.token_secret] }}
