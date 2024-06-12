@@ -76,11 +76,16 @@ jobs:
         run: npm version prepatch --preid=$(date +%s) --no-git-tag-version
         working-directory: packages/${{ steps.get-package.outputs.package }}
 
-      - name: Publish
+      - name: Set publish flags
+        id: set-flags
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            FLAGS="--tag pre"
+            echo "FLAGS=--tag pre" >> $GITHUB_OUTPUT
           fi
+
+      - name: Publish
+        run: |
+          echo "Publishing with flags: $FLAGS"
           pnpm publish --access public --no-git-checks $FLAGS --reporter ndjson
         working-directory: packages/${{ steps.get-package.outputs.package }}
         env:
