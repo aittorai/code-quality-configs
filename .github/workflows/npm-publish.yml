@@ -67,6 +67,8 @@ jobs:
 
       - name: Publish
         shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           # manual workflow dispatches are tagged as pre-release - all releases should go through proper tagging process
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
@@ -74,5 +76,3 @@ jobs:
           fi
           pnpm publish --access public --no-git-checks $FLAGS
         working-directory: 'packages/${{steps.get-package.outputs.package}}'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets[matrix.registry.token_secret] }}
