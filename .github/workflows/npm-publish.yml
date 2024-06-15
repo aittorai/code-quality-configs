@@ -1,4 +1,4 @@
-name: Publish package
+name: Publish packages
 
 on:
   workflow_dispatch:
@@ -13,8 +13,7 @@ on:
           - prettier-config-react
   push:
     tags:
-      - 'eslint-config-react@v*.*.*'
-      - 'prettier-config-react@v*.*.*'
+      - 'v*.*.*'
 
 permissions:
   contents: read
@@ -22,27 +21,12 @@ permissions:
 
 jobs:
   publish:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        registry:
-          - url: https://registry.npmjs.org
-            token_secret: NPM_TOKEN
-          - url: https://npm.pkg.github.com
-            token_secret: GH_PAT
-    runs-on: ubuntu-latest
-    steps:
-      - id: get-package
-        shell: bash
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            # manual dispatches get package from the input
-            package=${{ github.event.inputs.package }}
-          else
-            # else get the package from the tag
-            package=$(echo ${{github.ref_name}} | cut -d@ -f1)
-          fi
-          echo "package=$package" >> $GITHUB_OUTPUT
+        package: [eslint-config-react, prettier-config-react]
 
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -57,31 +41,30 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: pnpm
-          registry-url: ${{ matrix.registry.url }}
           scope: '@aittorai'
 
       - name: Configure .npmrc
         run: |
-          echo "//${{ matrix.registry.url }}/:_authToken=${{ secrets[matrix.registry.token_secret] }}" > ~/.npmrc
-          echo "@aittorai:registry=${{ matrix.registry.url }}" >> ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "@aittorai:registry=https://registry.npmjs.org" >> ~/.npmrc
 
       - name: Install dependencies
         run: pnpm install
 
       - name: Version bump
-        working-directory: 'packages/${{steps.get-package.outputs.package}}'
-        # only if manual workflow dispatch and not on a tag
         if: github.event_name == 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/')
-        run: npm version prepatch --preid=$(git rev-parse --short HEAD) --no-git-tag-version
+        run: |
+          cd packages/${{ matrix.package }}
+          npm version prepatch --preid=$(git rev-parse --short HEAD) --no-git-tag-version
 
       - name: Publish
         shell: bash
         env:
-          NODE_AUTH_TOKEN: ${{ secrets[matrix.registry.token_secret] }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # manual workflow dispatches are tagged as pre-release - all releases should go through proper tagging process
+          cd packages/${{ matrix.package }}
+          FLAGS=""
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            FLAGS="--tag latest" >> $GITHUB_OUTPUT
+            FLAGS="--tag latest"
           fi
           pnpm publish --access public --no-git-checks $FLAGS
-        working-directory: 'packages/${{steps.get-package.outputs.package}}'
