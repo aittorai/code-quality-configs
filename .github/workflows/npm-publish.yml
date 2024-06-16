@@ -13,8 +13,7 @@ on:
           - prettier-config-react
   push:
     tags:
-      - 'eslint-config-react@v*.*.*'
-      - 'prettier-config-react@v*.*.*'
+      - 'v*.*.*'
 
 permissions:
   contents: read
