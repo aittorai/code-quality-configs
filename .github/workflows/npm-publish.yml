@@ -70,6 +70,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Version bump
+        working-directory: 'packages/${{steps.get-package.outputs.package}}'
+        # only if manual workflow dispatch and not on a tag
+        if: github.event_name == 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/')
+        run: npm version prepatch --preid=$(git rev-parse --short HEAD) --no-git-tag-version
+
       - name: Change directory to target package
         run: cd packages/${{ matrix.package }}
 
@@ -79,3 +85,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets[matrix.registry.token_secret] }}
         run: |
           pnpm publish --access public --no-git-checks
+        working-directory: 'packages/${{steps.get-package.outputs.package}}'
