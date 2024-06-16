@@ -24,9 +24,9 @@ jobs:
     strategy:
       matrix:
         registry:
-          - url: npmjs.org
+          - url: https://registry.npmjs.org
             token_secret: NPM_TOKEN
-          - url: npm.pkg.github.com
+          - url: https://npm.pkg.github.com
             token_secret: GH_PAT
         package:
           - eslint-config-react
@@ -47,13 +47,13 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: pnpm
-          registry-url: https://registry.${{ matrix.registry.url }}
+          registry-url: ${{ matrix.registry.url }}
           scope: '@aittorai'
 
       - name: Configure .npmrc
         run: |
-          echo "//registry.${{ matrix.registry.url }}/:_authToken=${{ secrets[matrix.registry.token_secret] }}" > ~/.npmrc
-          echo "@aittorai:registry=https://registry.${{ matrix.registry.url }}" >> ~/.npmrc
+          echo "//${{ matrix.registry.url }}/:_authToken=${{ secrets[matrix.registry.token_secret] }}" > ~/.npmrc
+          echo "@aittorai:registry=${{ matrix.registry.url }}" >> ~/.npmrc
 
       - name: Install dependencies
         run: pnpm install

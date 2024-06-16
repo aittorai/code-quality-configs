@@ -1,6 +1,6 @@
 {
   "name": "@aittorai/eslint-config-react",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "Aittor eslint config for react",
   "main": "./eslint-config.js",
   "author": "Aittor",
