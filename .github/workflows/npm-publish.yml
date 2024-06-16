@@ -29,20 +29,11 @@ jobs:
             token_secret: NPM_TOKEN
           - url: https://npm.pkg.github.com
             token_secret: GH_PAT
+        package:
+          - eslint-config-react
+          - prettier-config-react
     runs-on: ubuntu-latest
     steps:
-      - id: get-package
-        shell: bash
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            # manual dispatches get package from the input
-            package=${{ github.event.inputs.package }}
-          else
-            # else get the package from the tag
-            package=$(echo ${{github.ref_name}} | cut -d@ -f1)
-          fi
-          echo "package=$package" >> $GITHUB_OUTPUT
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -68,20 +59,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Version bump
-        working-directory: 'packages/${{steps.get-package.outputs.package}}'
-        # only if manual workflow dispatch and not on a tag
-        if: github.event_name == 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/')
-        run: npm version prepatch --preid=$(git rev-parse --short HEAD) --no-git-tag-version
+      - name: Change directory to target package
+        run: cd packages/${{ matrix.package }}
 
       - name: Publish
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets[matrix.registry.token_secret] }}
         run: |
-          # manual workflow dispatches are tagged as pre-release - all releases should go through proper tagging process
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            export FLAGS="--tag latest"
-          fi
-          pnpm publish --access public --no-git-checks $FLAGS
-        working-directory: 'packages/${{steps.get-package.outputs.package}}'
+          pnpm publish --access public --no-git-checks
