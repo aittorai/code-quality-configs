@@ -33,6 +33,18 @@ jobs:
           - prettier-config-react
     runs-on: ubuntu-latest
     steps:
+      - id: get-package
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # manual dispatches get package from the input
+            package=${{ github.event.inputs.package }}
+          else
+            # else get the package from the tag
+            package=$(echo ${{github.ref_name}} | cut -d@ -f1)
+          fi
+          echo "package=$package" >> $GITHUB_OUTPUT
+
       - name: Checkout
         uses: actions/checkout@v4
 
