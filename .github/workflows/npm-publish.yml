@@ -85,4 +85,3 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets[matrix.registry.token_secret] }}
         run: |
           pnpm publish --access public --no-git-checks
-        working-directory: 'packages/${{steps.get-package.outputs.package}}'
